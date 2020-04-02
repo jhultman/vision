@@ -181,10 +181,10 @@ class BoxCoder(object):
         box_sum = 0
         for val in boxes_per_image:
             box_sum += val
-        pred_boxes = self.decode_single(
-            rel_codes.reshape(box_sum, -1), concat_boxes
-        )
-        return pred_boxes.reshape(box_sum, -1, 4)
+        assert rel_codes.size(0) == box_sum
+        pred_boxes = self.decode_single(rel_codes, concat_boxes)
+        deltas_per_box = rel_codes.size(-1) // 4
+        return pred_boxes.reshape(box_sum, deltas_per_box, 4)
 
     def decode_single(self, rel_codes, boxes):
         """
